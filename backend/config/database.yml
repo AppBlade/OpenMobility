@@ -1,0 +1,21 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  collation: utf8_unicode_ci
+  pool: 5
+  username: root
+  password:
+
+development:
+  <<: *default
+  database: open_mobility_development
+
+test:
+  <<: *default
+  database: open_mobility_test
+
+production:
+  <<: *default
+  database: open_mobility_production
+  username: open_mobility
+  password: <%= ENV['OPENMOBILITY_DATABASE_PASSWORD'] %>

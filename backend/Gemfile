@@ -1,0 +1,42 @@
+source 'https://rubygems.org'
+
+
+gem 'rails', '4.2.1'
+gem 'mysql2'
+
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 2.0'
+gem 'CFPropertyList', require: 'cfpropertylist'
+
+# bundle exec rake doc:rails generates the API under doc/api.
+gem 'sdoc', '~> 0.4.0', group: :doc
+
+gem 'bcrypt', '~> 3.1.7'
+
+gem 'faraday'
+gem 'table_parser'
+
+group :development do
+  gem 'foreman'
+  gem 'guard-rspec'
+  gem 'libnotify'
+  gem 'spring'
+  gem 'spring-commands-rspec'
+end
+
+group :development, :test do
+  gem 'dotenv-rails'
+  gem 'factory_girl_rails'
+  gem 'pry-rails'
+  gem 'rspec-rails'
+end
+
+group :test do
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'faker'
+  gem 'launchy'
+  gem 'poltergeist'
+  gem 'selenium-webdriver'
+  gem 'simplecov', require: false
+end

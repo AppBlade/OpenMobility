@@ -1,0 +1,2 @@
+backend: bundle exec rails s
+dep-simulator: vendor/depsim-darwin/depsim start -output log/depsim.log
