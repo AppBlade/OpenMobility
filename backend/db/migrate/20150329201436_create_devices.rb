@@ -7,7 +7,7 @@ class CreateDevices < ActiveRecord::Migration
       t.string :board_config, :platform
       t.integer :cpid, :bdid
       t.date :release_date
-      t.integer :capabilities, null: false, default: 2**Device::Capabilities.count
+      t.integer :capabilities, null: false, default: 2**Entitlements.count
       t.timestamps null: false
     end
     add_index :device_models, :model, unique: true
@@ -27,7 +27,7 @@ class CreateDevices < ActiveRecord::Migration
       t.string  :ipsw_url, :ipsw_md5sum, :ipsw_sha1sum
       t.integer :ipsw_size
       t.boolean :signed, default: false, null: false
-      t.integer :capabilities, null: false, default: 2**Device::Capabilities.count
+      t.integer :capabilities, null: false, default: 2**Entitlements.count
       t.date :release_date
       t.timestamps null: false
     end

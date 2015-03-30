@@ -3,10 +3,12 @@ class Device < ActiveRecord::Base
   belongs_to :device_model_firmware, inverse_of: :devices, required: true
   belongs_to :device_variant, inverse_of: :devices
 
+  has_many :device_commands, dependent: :destroy
+  has_many :commands, through: :device_commands
+
   validates :udid, presence: true
 
   def self.find_or_create_from_challenge_response!(challenge_response)
-    Rails.logger.info challenge_response
     device = find_by_udid(challenge_response['UDID']) || new
     device.udid  = challenge_response['UDID']
     device.serial_number = challenge_response['SERIAL']

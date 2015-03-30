@@ -11,7 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150330024947) do
+ActiveRecord::Schema.define(version: 20150406174559) do
+
+  create_table "commands", force: :cascade do |t|
+    t.string   "type",                 limit: 255
+    t.text     "settings",             limit: 65535
+    t.integer  "dependent_command_id", limit: 4
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
+  add_index "commands", ["id", "type"], name: "notnow_queue", using: :btree
+
+  create_table "device_commands", force: :cascade do |t|
+    t.integer  "device_id",              limit: 4,                       null: false
+    t.integer  "command_id",             limit: 4,                       null: false
+    t.integer  "device_registration_id", limit: 4
+    t.string   "state",                  limit: 255, default: "pending", null: false
+    t.datetime "received_at"
+  end
+
+  add_index "device_commands", ["device_id", "state"], name: "queue", using: :btree
+  add_index "device_commands", ["id", "device_id"], name: "log_status", using: :btree
 
   create_table "device_firmwares", force: :cascade do |t|
     t.string   "buildid",      limit: 255
@@ -47,7 +68,7 @@ ActiveRecord::Schema.define(version: 20150330024947) do
 
   create_table "device_models", force: :cascade do |t|
     t.string   "model",        limit: 255,                    null: false
-    t.string   "name",         limit: 255,                    null: false
+    t.string   "name",         limit: 255, default: ""
     t.string   "board_config", limit: 255
     t.string   "platform",     limit: 255
     t.integer  "cpid",         limit: 4
@@ -62,11 +83,17 @@ ActiveRecord::Schema.define(version: 20150330024947) do
   add_index "device_models", ["release_date"], name: "index_device_models_on_release_date", using: :btree
 
   create_table "device_registrations", force: :cascade do |t|
-    t.string   "enrollment_challenge_digest", limit: 255,                     null: false
-    t.string   "state",                       limit: 255, default: "pending", null: false
+    t.string   "enrollment_challenge_digest", limit: 255,                          null: false
+    t.string   "state",                       limit: 255,   default: "challenged", null: false
     t.integer  "device_id",                   limit: 4
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
+    t.string   "user_agent",                  limit: 255
+    t.text     "challenge_certificate",       limit: 65535
+    t.string   "scep_challenge_digest",       limit: 255
+    t.text     "device_identity_certificate", limit: 65535
+    t.string   "apns_push_magic",             limit: 255
+    t.string   "apns_token",                  limit: 255
   end
 
   create_table "device_variants", force: :cascade do |t|

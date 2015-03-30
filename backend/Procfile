@@ -1,2 +1,2 @@
-backend: bundle exec rails s
+backend: bundle exec passenger start
 dep-simulator: vendor/depsim-darwin/depsim start -output log/depsim.log

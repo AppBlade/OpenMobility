@@ -3,3 +3,6 @@ backend/vendor/depsim-*
 backend/tmp
 backend/log
 backend/bin
+backend/ssl
+**/*.pid
+**/*.pid.lock

@@ -1,0 +1,10 @@
+rvm:
+  - 2.2.1
+script: sh -c 'cd backend && ln -s ../.git ./.git && bundle install && bundle exec rake db:setup spec'
+notifications:
+  slack:
+    secure: NukkA+MKnEF61RLj1e+qm2u6MaCmhwkmkDzseHuzYR6sWC/ehTHXAopzDPjcSqOgni/BLNXxMdzGGzkTftPbTBgRFAZQINw1Mbbgd/AOW91P1eCDieIVFv744iEaLY9Jli6ixNDX0uO3S14j8zd4o8UuwsMcrguWHR4+SuJZDmk=
+addons:
+  code_climate:
+    repo_token:
+      secure: uwEnMtwcg4kmL39pa51msiC+YQ3sjXhwOIQJTkFYDB0CLIBGyXOc11BPdrL0YLHBinJWD/TO4CovTY1LIhgOR4JbgKtkF0E1niC+j5oZevG2o8d0mzZ1s4bOQa35QykufXskptpMEaPMr8dKaZChHB2/8T+aw4W6ZGrW+CCH2eI=

@@ -19,9 +19,10 @@ gem 'table_parser'
 group :development do
   gem 'foreman'
   gem 'guard-rspec'
-  gem 'libnotify'
+  gem 'ruby_gntp'
   gem 'spring'
   gem 'spring-commands-rspec'
+  gem 'passenger', require: false
 end
 
 group :development, :test do
@@ -29,6 +30,8 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'pry-rails'
   gem 'rspec-rails'
+  gem 'rubocop'
+  gem 'brakeman'
 end
 
 group :test do
@@ -38,5 +41,6 @@ group :test do
   gem 'launchy'
   gem 'poltergeist'
   gem 'selenium-webdriver'
+  gem 'codeclimate-test-reporter', require: false
   gem 'simplecov', require: false
 end
