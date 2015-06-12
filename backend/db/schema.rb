@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406174559) do
+ActiveRecord::Schema.define(version: 20150612000329) do
 
   create_table "commands", force: :cascade do |t|
     t.string   "type",                 limit: 255
@@ -42,9 +42,10 @@ ActiveRecord::Schema.define(version: 20150406174559) do
     t.date     "release_date"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.string   "beta",         limit: 255
   end
 
-  add_index "device_firmwares", ["buildid"], name: "index_device_firmwares_on_buildid", unique: true, using: :btree
+  add_index "device_firmwares", ["buildid"], name: "index_device_firmwares_on_buildid", using: :btree
   add_index "device_firmwares", ["release_date"], name: "index_device_firmwares_on_release_date", using: :btree
 
   create_table "device_model_firmwares", force: :cascade do |t|

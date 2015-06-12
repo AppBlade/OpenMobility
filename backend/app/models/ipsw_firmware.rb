@@ -44,6 +44,10 @@ module IpswFirmware
     'iPhone6,2' => [
       {'buildid' => '11A466', 'version' => '7.0', 'releasedate' => '2013-9-18'}
     ],
+    'Watch1,1' => [
+    ],
+    'Watch1,2' => [
+    ]
   }
 
   def self.load_from_ipsw_me!
