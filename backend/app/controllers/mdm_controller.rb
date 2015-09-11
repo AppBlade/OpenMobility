@@ -2,13 +2,17 @@ class MdmController < ApplicationController
 
   def queue
     fail PermissionDenied unless device_udid_matches? && valid_mdm_signature?
-    pending_command = DeviceCommand.update_and_issue_next_command! parsed_response, device
+    puts parsed_request.inspect
+    pending_command = DeviceCommand.update_and_issue_next_command! parsed_request, device
+    pending_command.update(
+      state: 'received',
+      received_at: Time.now
+    ) if pending_command
     send_data pending_command.try(&:to_plist), type: :xml
   end
 
   def check_in
     fail PermissionDenied unless device_udid_matches? && valid_mdm_signature?
-    Rails.logger.info parsed_request
     device_registration.update_from_check_in! parsed_request
     head :ok
   end
