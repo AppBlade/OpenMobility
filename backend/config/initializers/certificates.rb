@@ -1,5 +1,3 @@
-
-
 if Rails.env.test?
 
   ScepKey = OpenSSL::PKey::RSA.new 2048
@@ -53,7 +51,7 @@ else
   ScepCert = OpenSSL::X509::Certificate.new File.read(scep_cert_path)
 
   apns_key_path = File.join(Rails.root, 'ssl', 'apnskey.pem')
-  ApnsKey = OpenSSL::PKey::RSA.new File.read(apns_key_path), ENV['APNS_PASSPHRASE']
+  ApnsKey = OpenSSL::PKey::RSA.new File.read(apns_key_path), 'ad50c8b9b35ec4384e7f2b9dcaebe1cb'
 
   apns_cert_path = File.join(Rails.root, 'ssl', 'apnscert.pem')
   ApnsCert = OpenSSL::X509::Certificate.new File.read(apns_cert_path)

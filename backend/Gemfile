@@ -15,6 +15,7 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'faraday'
 gem 'table_parser'
+gem 'apns', github: 'jamesdaniels/apns'
 
 group :development do
   gem 'foreman'

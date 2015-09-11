@@ -4,7 +4,10 @@ class DeviceRegistration < ActiveRecord::Base
 
   belongs_to :device
 
-  AccessRights = %i(configuration_profile_inspection configuration_profile_management device_lock_and_unlock device_erase device_information_queries network_information_queries provisioning_profile_inspection provisioning_profile_management application_inspection restriction_queries security_queries setting_management application_management).freeze
+  has_many :device_user_registrations, dependent: :destroy
+  has_many :device_users, through: :device_user_registrations
+
+  AccessRights = %w(configuration_profile_inspection configuration_profile_management device_lock_and_unlock device_erase device_information_queries network_information_queries provisioning_profile_inspection provisioning_profile_management application_inspection restriction_queries security_queries setting_management application_management).freeze
 
   def self.create_from_request(request)
     create do |device_registration|
@@ -31,6 +34,49 @@ class DeviceRegistration < ActiveRecord::Base
     self.scep_challenge_digest = Password.create @scep_challenge
   end
 
+  def send_push
+    send_apns_notifications [
+      APNS::MdmNotification.new(
+        Base64.decode64(apns_token).unpack('H*')[0],
+        apns_push_magic
+      )
+    ]
+  end
+
+  def send_apns_notifications(notifications)
+    apns_connection do |ssl|
+      notifications.each do |notification|
+        ssl.write notification.packaged_notification
+      end
+    end
+  end
+
+  def apns_connection(feedback = false)
+
+		context      = OpenSSL::SSL::SSLContext.new
+    context.cert = ApnsCert
+    context.key  = ApnsKey
+
+    if feedback
+      host = 'feedback.push.apple.com'
+      port = 2196
+    else
+      host = 'gateway.push.apple.com'
+      port = 2195
+    end
+
+    sock = TCPSocket.new host, port
+    ssl = OpenSSL::SSL::SSLSocket.new sock, context
+    ssl.connect
+
+		yield(ssl)
+
+		ssl.flush
+		ssl.close
+		sock.close
+  end
+
+
   def to_plist(payload_url)
     plist = CFPropertyList::List.new
     plist.value = CFPropertyList.guess plist_values(payload_url)
@@ -40,7 +86,7 @@ class DeviceRegistration < ActiveRecord::Base
   def access_rights
     AccessRights.each_with_index.map do |right, index|
       if true
-        (1 + index) ** 2
+        2 ** index
       else
         0
       end
@@ -139,9 +185,27 @@ class DeviceRegistration < ActiveRecord::Base
   def update_from_check_in!(parsed_request)
     case parsed_request['MessageType']
     when 'TokenUpdate'
-      self.apns_push_magic = parsed_request['PushMagic']
-      self.apns_token = Base64.encode64 parsed_request['Token']
-      save!
+      if parsed_request['UserID']
+        device_user = DeviceUser.find_or_create_by(
+          user_id: parsed_request['UserID'],
+          device_id: device_id
+        )
+        device_user.user_long_name = parsed_request['UserLongName']
+        device_user.user_short_name = parsed_request['UserShortName']
+        device_user.save!
+
+        device_user_registration = DeviceUserRegistration.find_or_create_by(
+          device_user: device_user,
+          device_registration: self
+        )
+        device_user_registration.apns_push_magic = parsed_request['PushMagic']
+        device_user_registration.apns_token = Base64.encode64 parsed_request['Token']
+        device_user_registration.save!
+      else
+        self.apns_push_magic = parsed_request['PushMagic']
+        self.apns_token = Base64.encode64 parsed_request['Token']
+        save!
+      end
     when 'Authenticate'
       self.state = 'managed'
       transaction do
